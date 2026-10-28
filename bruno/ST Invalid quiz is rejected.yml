@@ -1,0 +1,39 @@
+info:
+  name: ST Invalid quiz is rejected
+  type: http
+  seq: 6
+
+http:
+  method: POST
+  url: "{{api}}/quizzes"
+  body:
+    type: json
+    data: |-
+      {
+        "title": "abc"
+      }
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("HTTP status is 400", () => {
+          expect(res.status).to.eq(400);
+        })
+
+        test("error message is validation failed", () => {
+          const json = res.body;
+          expect(json.message).to.eq("validation failed");
+        })
+
+        test("title error is reported", () => {
+          const json = res.body;
+          expect(json.errors[0].field).to.eq("title");
+        })
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: true

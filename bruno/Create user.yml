@@ -1,0 +1,40 @@
+info:
+  name: Create user
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{api}}/users"
+  body:
+    type: json
+    data: |-
+      {
+        "email": "{{user1email}}",
+        "password": "{{user1password}}"
+      }
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        bru.setVar("user1email", `test1-${Date.now()}@aleygues.fr`);
+        bru.setVar("user1password", "SuperSecret!3");
+    - type: tests
+      code: |-
+        test("user has an id", () => {
+          const json = res.body;
+          expect(json.id).to.be.a("number");
+        })
+
+        test("user has an email", () => {
+          const json = res.body;
+          expect(json.email).to.eq(bru.getVar("user1email"));
+        })
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: true

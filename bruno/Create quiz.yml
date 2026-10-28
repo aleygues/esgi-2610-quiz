@@ -1,0 +1,38 @@
+info:
+  name: Create quiz
+  type: http
+  seq: 4
+
+http:
+  method: POST
+  url: "{{api}}/quizzes"
+  body:
+    type: json
+    data: |-
+      {
+        "title": "My first quiz"
+      }
+  auth:
+    type: bearer
+    token: "{{user1token}}"
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("quiz has an id", () => {
+          const json = res.body;
+          expect(json.id).to.be.a("number");
+        })
+
+        test("quiz has a title", () => {
+          const json = res.body;
+          expect(json.title).to.eq("My first quiz");
+        })
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: true

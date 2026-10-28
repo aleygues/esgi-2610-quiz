@@ -1,0 +1,5 @@
+name: Local
+variables:
+  - name: api
+    value: http://localhost:3001/api
+    description: ""

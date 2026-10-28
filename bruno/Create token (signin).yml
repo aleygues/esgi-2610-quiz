@@ -1,0 +1,35 @@
+info:
+  name: Create token (signin)
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: "{{api}}/users/tokens"
+  body:
+    type: json
+    data: |-
+      {
+        "email": "{{user1email}}",
+        "password": "{{user1password}}"
+      }
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        const json = res.body;
+        bru.setVar("user1token", json.token);
+    - type: tests
+      code: |-
+        test("token is returned", () => {
+          const json = res.body;
+          expect(json.token).to.be.a("string");
+        })
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: true
